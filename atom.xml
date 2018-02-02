@@ -17,7 +17,7 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Grpc源码分析-Functional Options Patter</title>
+    <title>grpc源码分析-Functional Options Patter</title>
     <link href="http://keyboardman.com/2018/01/03/grpc-functional-options-patter/"/>
     <id>http://keyboardman.com/2018/01/03/grpc-functional-options-patter/</id>
     <published>2018-01-03T07:57:25.000Z</published>
