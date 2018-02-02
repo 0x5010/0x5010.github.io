@@ -127,7 +127,7 @@
 
 
 
-  <title>标签: b | keyboardman</title>
+  <title>Grpc源码分析-Functional Options Patter | keyboardman</title>
   
 
 
@@ -146,7 +146,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     
@@ -260,58 +260,175 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>b<small>标签</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://keyboardman.com/2018/01/03/grpc-functional-options-patter/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivan Lim">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="keyboardman">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/01/03/hello-world/" itemprop="url">
-              
-                <span itemprop="name">Test Hexo</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Grpc源码分析-Functional Options Patter</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-03T15:57:25+08:00"
-              content="2018-01-03" >
-          01-03
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-03T15:57:25+08:00">2018-01-03</time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index">
+                    <span itemprop="name">go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在开发中，经常会将一个方法的参数设置为可选，并设置一些默认值，使代码更通用简洁。在很多语言中这很容易，比如在C类语言中,可以使用相同方法名不同参数的多个版本(重写)， 而在像python这样的语言中, 可以给参数一个默认值，并在调用方法时忽略它们。但是在 Go中, 这两种方式都用不了。</p>
+<p>像构造方法这是一个非常常见的用例，拿它来做例子。比方说,我们有一些名为<code>Client</code>的结构,它有一个连接和附属参数(timeout和retries)，然后我们提供一个构造方法。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Client <span class="keyword">interface</span> &#123;</span><br><span class="line">    Do() error</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> client <span class="keyword">struct</span> &#123;</span><br><span class="line">    conn    Connection</span><br><span class="line">    timeout <span class="keyword">int</span></span><br><span class="line">    retries <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewClient</span><span class="params">(conn Connection, timeout, retries <span class="keyword">int</span>)</span> <span class="title">Client</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;client&#123;</span><br><span class="line">        conn:    conn,</span><br><span class="line">        timeout: timeout,</span><br><span class="line">        retries: retries,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是每次调用NewClient时都要提供<code>timeout</code>和<code>retries</code>。而大多数时候只想使用默认值。<br>一个方法是创建另一个不同名称的构造方法。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewClient</span><span class="params">(conn Connection)</span> <span class="title">Client</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">NewClientWithOptions</span><span class="params">(conn Connection, timeout, retries <span class="keyword">int</span>)</span> <span class="title">Client</span></span></span><br></pre></td></tr></table></figure></p>
+<p>另一种是传入了一个配置对象。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Options <span class="keyword">struct</span> &#123;</span><br><span class="line">    Retries <span class="keyword">int</span> </span><br><span class="line">    Timeout <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewClient</span><span class="params">(conn Connection, options Options)</span> <span class="title">Client</span></span></span><br></pre></td></tr></table></figure></p>
+<p>不够优雅，要么要写非常多的构造方法，要么需要在代码中进行额外的检查和验证或通过传递不关心的参数来为做额外判断的工作。而grpc使用的是一种干净的解决方案: Functional Options Patter。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> dialOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">	...</span><br><span class="line">	insecure    <span class="keyword">bool</span></span><br><span class="line">	timeout     time.Duration</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> DialOption <span class="function"><span class="keyword">func</span><span class="params">(*dialOptions)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">type</span> <span class="title">ClientConn</span> <span class="title">struct</span></span> &#123;</span><br><span class="line">	...</span><br><span class="line">	dopts        dialOptions</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Dial</span><span class="params">(target <span class="keyword">string</span>, opts ...DialOption)</span> <span class="params">(*ClientConn, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> DialContext(context.Background(), target, opts...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>ClientConn</code>主要附属参数在<code>dopts</code>中，构造方法<code>Dial</code>参数是可选个数的<code>DialOption</code>。是不是觉得和上面第二种没什么区别，注意传进去的<code>DialOption</code>是方法，先看看库里几个常见的方法的实现。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithInsecure</span><span class="params">()</span> <span class="title">DialOption</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(o *dialOptions)</span></span> &#123;</span><br><span class="line">		o.insecure = <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithTimeout</span><span class="params">(d time.Duration)</span> <span class="title">DialOption</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(o *dialOptions)</span></span> &#123;</span><br><span class="line">		o.timeout = d</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>dialOptions</code>是可用选项，定义了一些方法<code>WithInsecure</code>和<code>WithTimeout</code>, 它们返回一个闭包函数，用来修改<code>dialOptions</code>的选项。 另外又定义了<code>DialOption</code>, 它是一个接受这些方法。接着我们来看构造方法的关键部分。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DialContext</span><span class="params">(ctx context.Context, target <span class="keyword">string</span>, opts ...DialOption)</span> <span class="params">(conn *ClientConn, err error)</span></span> &#123;</span><br><span class="line">	cc := &amp;ClientConn&#123;</span><br><span class="line">		target: target,</span><br><span class="line">		csMgr:  &amp;connectivityStateManager&#123;&#125;,</span><br><span class="line">		conns:  <span class="built_in">make</span>(<span class="keyword">map</span>[*addrConn]<span class="keyword">struct</span>&#123;&#125;),</span><br><span class="line"></span><br><span class="line">		blockingpicker: newPickerWrapper(),</span><br><span class="line">	&#125;</span><br><span class="line">	... </span><br><span class="line">	<span class="comment">// 如果想设置默认值可以 cc.dopts = DefaultDopts</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, opt := <span class="keyword">range</span> opts &#123;</span><br><span class="line">		opt(&amp;cc.dopts)</span><br><span class="line">	&#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>构造函数遍历了DialOption列表, 并对每一项应用返回的闭包运用到的选项<code>dopts</code>。使用起来也很方便。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grpc.Dial(addr, grpc.WithInsecure())</span><br><span class="line">grpc.Dial(addr, grpc.WithInsecure(), grpc.WithTimeout(time.Duration(<span class="number">10</span>*time.Second)))</span><br></pre></td></tr></table></figure></p>
+<p>而且我们可以随时添加新的选项, 只需要对代码进行非常少量的更改。</p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+            <a href="/tags/grpc/" rel="tag"># grpc</a>
+          
+            <a href="/tags/源码分析/" rel="tag"># 源码分析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -554,6 +671,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.0"></script>
+
+
 
   
 
