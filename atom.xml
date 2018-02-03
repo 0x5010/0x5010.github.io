@@ -5,9 +5,9 @@
   
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://keyboardman.com/"/>
+  <link href="http://blog.keyboardman.com/"/>
   <updated>2018-02-02T05:07:48.000Z</updated>
-  <id>http://keyboardman.com/</id>
+  <id>http://blog.keyboardman.com/</id>
   
   <author>
     <name>Ivan Lim</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>grpc源码分析-Functional Options Patter</title>
-    <link href="http://keyboardman.com/2018/01/03/grpc-functional-options-patter/"/>
-    <id>http://keyboardman.com/2018/01/03/grpc-functional-options-patter/</id>
+    <link href="http://blog.keyboardman.com/2018/01/03/grpc-functional-options-patter/"/>
+    <id>http://blog.keyboardman.com/2018/01/03/grpc-functional-options-patter/</id>
     <published>2018-01-03T07:57:25.000Z</published>
     <updated>2018-02-02T05:07:48.000Z</updated>
     
@@ -34,14 +34,14 @@
     
     </summary>
     
-      <category term="go" scheme="http://keyboardman.com/categories/go/"/>
+      <category term="go" scheme="http://blog.keyboardman.com/categories/go/"/>
     
     
-      <category term="go" scheme="http://keyboardman.com/tags/go/"/>
+      <category term="go" scheme="http://blog.keyboardman.com/tags/go/"/>
     
-      <category term="grpc" scheme="http://keyboardman.com/tags/grpc/"/>
+      <category term="grpc" scheme="http://blog.keyboardman.com/tags/grpc/"/>
     
-      <category term="源码分析" scheme="http://keyboardman.com/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+      <category term="源码分析" scheme="http://blog.keyboardman.com/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
     
   </entry>
   
