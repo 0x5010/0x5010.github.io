@@ -380,7 +380,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc</span><br></pre></td></tr></table></figure>
 <p>现在我们需要告诉<code>binfmt_misc</code>模块如何使用<code>gorun</code>来执行我们的<code>.go</code>文件。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">':golang:E::go::/usr/local/bin/gorun:OC'</span> | sudo tee /proc/sys/fs/binfmt_misc/register</span><br></pre></td></tr></table></figure>
-<p>配置字符串<code>:golang:E::go::/usr/local/bin/gorun:OC</code>，它告诉系统：“如果遇到一个带<code>.go</code>扩展名的可执行文件，请使用<code>/usr/local/bin/gorun</code>解释器执行它“。字符串末尾的OC标志确保脚本将根据脚本本身设置的所有者信息和权限位执行，而不是在解释器二进制文件上设置的那些位。这使Go脚本的执行行为与Linux中其他可执行文件和脚本的行为相同。这并没有改变<code>.go</code>文件的内容，自然可以像之前一样的<code>go run</code>和<code>go build</code>.</p>
+<p>配置字符串<code>:golang:E::go::/usr/local/bin/gorun:OC</code>，它告诉系统：“如果遇到一个带<code>.go</code>扩展名的可执行文件，请使用<code>/usr/local/bin/gorun</code>解释器执行它“。字符串末尾的OC标志确保脚本将根据脚本本身设置的所有者信息和权限位执行，而不是在解释器二进制文件上设置的那些位。这使Go脚本的执行行为与Linux中其他可执行文件和脚本的行为相同。这并没有改变<code>.go</code>文件的内容，自然可以像之前一样的<code>go run</code>和<code>go build</code>。</p>
 
       
     </div>
