@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.keyboardman.me/"/>
-  <updated>2018-02-08T09:09:26.000Z</updated>
+  <updated>2018-02-22T03:17:43.000Z</updated>
   <id>http://blog.keyboardman.me/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>在linux像脚本语言一样使用go</title>
+    <link href="http://blog.keyboardman.me/2018/02/22/using-go-as-a-scripting-language-in-linux/"/>
+    <id>http://blog.keyboardman.me/2018/02/22/using-go-as-a-scripting-language-in-linux/</id>
+    <published>2018-02-22T03:16:24.000Z</published>
+    <updated>2018-02-22T03:17:43.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>有时我们想使用go像脚本一样。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod u+x script.go</span><br><span class="line">./script.go</span><br></pre></td></tr></table></figure><p>乍一看好像很容易实现，在<code>.go</code>文件开头添加shebang（<code>#!</code>）行就可以了。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env <span class="keyword">go</span> run</span><br></pre></td></tr></table></figure><p>但是这样运行时不能正确地将脚本错误码返回给操作系统。错误码这对于脚本来说很重要，因为错误代码是多个脚本之间相互交互和操作系统环境最常见的方式之一。</p><p>而<code>gorun</code>解决了这个问题，安装。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/erning/gorun</span><br><span class="line"></span><br><span class="line">cp <span class="variable">$GOPATH</span>/bin/gorun /usr/<span class="built_in">local</span>/bin  <span class="comment"># 非必要的，在注册binfmt_misc时使用gorun的绝对路径就行</span></span><br></pre></td></tr></table></figure><p>开头改成：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env gorun</span><br></pre></td></tr></table></figure><p>可是还有个问题，因为Go不知道如何处理<code>#</code>开头的行。其他脚本语言没有这个问题，因为其中大多数<code>#</code>是一种指定注释的方式，但是Go注释以<code>//</code>开头，并且在调用<code>go run</code>或<code>go build</code>会产生错误。</p><p>我们中的大多数人都知道Linux（包括一些类Unix操作系统）的可执行文件是ELF二进制格式。其实Linux内核还支持更多二进制格式（用于各种二进制格式的树内模块通常在其名称中具有<code>binfmt_</code>前缀）。值得注意的是<code>binfmt_script</code>模块，它负责解析上面提到的seebang行并在目标系统上执行脚本。但shebang不是Go脚本的最佳选择，而Linux内核有一个合适的模块<code>binfmt_misc</code>。该模块可以通过定义良好的<code>procfs</code>接口直接从用户空间动态添加对各种可执行格式的支持。</p><p>根据<a href="https://www.kernel.org/doc/html/v4.14/admin-guide/binfmt-misc.html" target="_blank" rel="noopener">内核文档</a>，首先安装<code>binfmt_misc</code></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc</span><br></pre></td></tr></table></figure><p>现在我们需要告诉<code>binfmt_misc</code>模块如何使用<code>gorun</code>来执行我们的<code>.go</code>文件。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">':golang:E::go::/usr/local/bin/gorun:OC'</span> | sudo tee /proc/sys/fs/binfmt_misc/register</span><br></pre></td></tr></table></figure><p>配置字符串<code>:golang:E::go::/usr/local/bin/gorun:OC</code>，它告诉系统：“如果遇到一个带<code>.go</code>扩展名的可执行文件，请使用<code>/usr/local/bin/gorun</code>解释器执行它“。字符串末尾的OC标志确保脚本将根据脚本本身设置的所有者信息和权限位执行，而不是在解释器二进制文件上设置的那些位。这使Go脚本的执行行为与Linux中其他可执行文件和脚本的行为相同。这并没有改变<code>.go</code>文件的内容，自然可以像之前一样的<code>go run</code>和<code>go build</code>.</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;有时我们想使用go像脚本一样。&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2
+      
+    
+    </summary>
+    
+      <category term="go技巧" scheme="http://blog.keyboardman.me/categories/go%E6%8A%80%E5%B7%A7/"/>
+    
+    
+      <category term="go" scheme="http://blog.keyboardman.me/tags/go/"/>
+    
+      <category term="linux" scheme="http://blog.keyboardman.me/tags/linux/"/>
+    
+  </entry>
   
   <entry>
     <title>grpc-go-连接语义和API</title>
