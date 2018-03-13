@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang=zh>
+<html>
 <head>
     <!-- so meta -->
     <meta charset="utf-8">
@@ -13,7 +13,6 @@
 <meta property="og:url" content="http://blog.keyboardman.me/2018/02/22/using-go-as-a-scripting-language-in-linux/index.html">
 <meta property="og:site_name" content="keyboardman">
 <meta property="og:description" content="有时我们想使用go像脚本一样。 12chmod u+x script.go./script.go 乍一看好像很容易实现，在.go文件开头添加shebang（#!）行就可以了。 1#!/usr/bin/env go run 但是这样运行时不能正确地将脚本错误码返回给操作系统。错误码这对于脚本来说很重要，因为错误代码是多个脚本之间相互交互和操作系统环境最常见的方式之一。 而gorun解决了这个问题，安">
-<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2018-02-22T03:42:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在linux像脚本语言一样使用go">
@@ -57,13 +56,13 @@
     <span id="nav">
       <ul>
          
-          <li><a href="/">Home</a></li>
+          <li><a href="/">Accueil</a></li>
          
-          <li><a href="/archives">Blog</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Zoeken</a></li>
+          <li><a href="/search">Chercher</a></li>
          
-          <li><a href="/about">Over mij</a></li>
+          <li><a href="/about">A propos</a></li>
         
       </ul>
     </span>
@@ -79,10 +78,10 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Vorige post</span>
-      <span id="i-next" class="info" style="display:none;">Volgende post</span>
-      <span id="i-top" class="info" style="display:none;">Naar boven</span>
-      <span id="i-share" class="info" style="display:none;">Deel deze post</span>
+      <span id="i-prev" class="info" style="display:none;">Article précédent</span>
+      <span id="i-next" class="info" style="display:none;">Article suivant</span>
+      <span id="i-top" class="info" style="display:none;">Retour au début</span>
+      <span id="i-share" class="info" style="display:none;">Partager cette article</span>
     </span>
     <br/>
     <div id="share" style="display: none">
@@ -170,13 +169,13 @@
     <div id="nav-footer" style="display: none">
       <ul>
          
-          <li><a href="/">Home</a></li>
+          <li><a href="/">Accueil</a></li>
          
-          <li><a href="/archives">Blog</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Zoeken</a></li>
+          <li><a href="/search">Chercher</a></li>
          
-          <li><a href="/about">Over mij</a></li>
+          <li><a href="/about">A propos</a></li>
         
       </ul>
     </div>
@@ -203,9 +202,9 @@
 
     <div id="actions-footer">
         <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> Inhoudsopgave</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Deel</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> Table des matière</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Partager</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Début</a>
     </div>
 
   </div>
@@ -220,13 +219,13 @@
     <nav>
       <ul>
          
-          <li><a href="/">Home</a></li>
+          <li><a href="/">Accueil</a></li>
          
-          <li><a href="/archives">Blog</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Zoeken</a></li>
+          <li><a href="/search">Chercher</a></li>
          
-          <li><a href="/about">Over mij</a></li>
+          <li><a href="/about">A propos</a></li>
         
       </ul>
     </nav>
