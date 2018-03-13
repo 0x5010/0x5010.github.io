@@ -538,7 +538,7 @@ body {
   }
 }
 .max-width {
-  max-width: 64rem;
+  max-width: 56rem;
 }
 @media (max-width: 480px) {
   .px3 {
@@ -1393,7 +1393,7 @@ code {
 .highlight {
   overflow-x: auto;
   margin: 1rem 0;
-  padding: 10px 15px;
+  padding: 0;
   border-radius: 4px;
   background: #3c3c3c;
   font-family: "Menlo", "Meslo LG", monospace;
@@ -1426,6 +1426,7 @@ code {
   clear: both;
 }
 .highlight pre {
+  margin: 0 0 10px 0;
   padding: 0;
   border: none;
   background: none;
@@ -1434,6 +1435,9 @@ code {
   width: auto;
 }
 .highlight td.gutter {
+  float: left;
+  width: 3em;
+  background: #505050;
   text-align: right;
 }
 .highlight .line {
