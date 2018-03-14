@@ -739,7 +739,7 @@ body {
 }
 #header-post #nav ul a {
   margin-right: 15px;
-  color: color-accent-1;
+  color: #d44375;
 }
 #header-post #nav ul a:hover {
   background-image: linear-gradient(transparent, transparent 5px, #d44375 5px, #d44375);
@@ -770,16 +770,6 @@ body {
 #header-post #actions .info {
   display: block;
   font-style: italic;
-}
-#header-post #share {
-  clear: both;
-  padding-top: 1rem;
-  padding-right: 2rem;
-  text-align: right;
-}
-#header-post #share li {
-  display: block;
-  margin: 0;
 }
 #header-post #toc {
   float: right;
@@ -928,25 +918,6 @@ body {
   display: inline-block;
   padding-left: 1rem;
   color: #d44375;
-}
-#footer-post #share-footer {
-  padding-right: 1rem;
-  padding-left: 1rem;
-  background: #cdcac6;
-  text-align: center;
-}
-#footer-post #share-footer ul {
-  display: table;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  list-style-type: none;
-}
-#footer-post #share-footer ul li {
-  display: inline-table;
-  padding: 10px;
-  width: 20%;
-  vertical-align: middle;
 }
 #footer-post #toc-footer {
   clear: both;
