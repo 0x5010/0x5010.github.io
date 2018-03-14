@@ -771,6 +771,16 @@ body {
   display: block;
   font-style: italic;
 }
+#header-post #share {
+  clear: both;
+  padding-top: 1rem;
+  padding-right: 2rem;
+  text-align: right;
+}
+#header-post #share li {
+  display: block;
+  margin: 0;
+}
 #header-post #toc {
   float: right;
   clear: both;
