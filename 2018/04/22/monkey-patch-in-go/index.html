@@ -10,7 +10,7 @@
 <meta name="keywords" content="go">
 <meta property="og:type" content="article">
 <meta property="og:title" content="go中的monkey patch">
-<meta property="og:url" content="http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/index.html">
+<meta property="og:url" content="http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/index.html">
 <meta property="og:site_name" content="keyboardman">
 <meta property="og:description" content="概述monkey patch(猴子补丁)是一种在不改变原始源代码的情况下扩展或修改动态语言的运行时代码的方法。许多人认为猴子修补只限于Python等动态语言。但事实并非如此，我们可以在运行时来修改Go函数。主角就是github.com/bouk/monkey。 猴子补丁主要有以下几个用处：  在运行时替换方法、属性等 在不修改第三方代码的情况下增加原来不支持的功能 在运行时为内存中的对象增加pat">
 <meta property="og:updated_time" content="2018-04-22T14:55:14.191Z">
@@ -70,6 +70,8 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/2018/05/12/nil-in-go/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
         
         <li><a class="icon" href="/2018/03/30/go-and-heap/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
@@ -84,17 +86,17 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&title=go中的monkey patch""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&text=go中的monkey patch"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&title=go中的monkey patch"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&is_video=false&description=go中的monkey patch"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=go中的monkey patch&body=Check out this article: http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&title=go中的monkey patch"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&title=go中的monkey patch"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&title=go中的monkey patch"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&title=go中的monkey patch"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/04/22/monkey_patch_in_go/&name=go中的monkey patch&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&title=go中的monkey patch""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&text=go中的monkey patch"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&title=go中的monkey patch"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&is_video=false&description=go中的monkey patch"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=go中的monkey patch&body=Check out this article: http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&title=go中的monkey patch"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&title=go中的monkey patch"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&title=go中的monkey patch"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&title=go中的monkey patch"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/04/22/monkey-patch-in-go/&name=go中的monkey patch&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
