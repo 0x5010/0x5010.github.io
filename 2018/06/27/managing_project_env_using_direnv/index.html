@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="概述最近Web Assembly（简称wasm）特性合并到了go主分支上，想尝试一下，但又不想直接把本机的go直接升级成devel版本，于是找到了direnv来独立一个go环境来测试wasm。 direnv是shell的环境切换器。它知道如何挂钩bash，zsh，tcsh，fish和elvish，以根据当前目录加载或卸载环境变量。这允许项目特定的环境变量而不会混淆~/.profile文件。 在每次">
+<meta name="keywords" content="go,direnv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用direnv来独立项目环境">
+<meta property="og:url" content="http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/index.html">
+<meta property="og:site_name" content="keyboardman">
+<meta property="og:description" content="概述最近Web Assembly（简称wasm）特性合并到了go主分支上，想尝试一下，但又不想直接把本机的go直接升级成devel版本，于是找到了direnv来独立一个go环境来测试wasm。 direnv是shell的环境切换器。它知道如何挂钩bash，zsh，tcsh，fish和elvish，以根据当前目录加载或卸载环境变量。这允许项目特定的环境变量而不会混淆~/.profile文件。 在每次">
+<meta property="og:updated_time" content="2018-06-27T03:35:06.316Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用direnv来独立项目环境">
+<meta name="twitter:description" content="概述最近Web Assembly（简称wasm）特性合并到了go主分支上，想尝试一下，但又不想直接把本机的go直接升级成devel版本，于是找到了direnv来独立一个go环境来测试wasm。 direnv是shell的环境切换器。它知道如何挂钩bash，zsh，tcsh，fish和elvish，以根据当前目录加载或卸载环境变量。这允许项目特定的环境变量而不会混淆~/.profile文件。 在每次">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
+          
+        
+    
+    <!-- title -->
+    <title>使用direnv来独立项目环境</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="keyboardman" type="application/atom+xml" />
+    
+</head>
+
+<body class="max-width mx-auto px3">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives">Articles</a></li>
+         
+          <li><a href="/search">Search</a></li>
+         
+          <li><a href="/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2018/05/12/nil-in-go/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&title=使用direnv来独立项目环境""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&text=使用direnv来独立项目环境"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&title=使用direnv来独立项目环境"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&is_video=false&description=使用direnv来独立项目环境"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用direnv来独立项目环境&body=Check out this article: http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&title=使用direnv来独立项目环境"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&title=使用direnv来独立项目环境"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&title=使用direnv来独立项目环境"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&title=使用direnv来独立项目环境"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/06/27/managing_project_env_using_direnv/&name=使用direnv来独立项目环境&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用"><span class="toc-number">3.</span> <span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置shell"><span class="toc-number">3.1.</span> <span class="toc-text">配置shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置目标目录"><span class="toc-number">3.2.</span> <span class="toc-text">配置目标目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stdlib"><span class="toc-number">3.3.</span> <span class="toc-text">stdlib</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#加载分层的-envrc"><span class="toc-number">3.4.</span> <span class="toc-text">加载分层的.envrc</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#运用"><span class="toc-number">4.</span> <span class="toc-text">运用</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        使用direnv来独立项目环境
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">0x5010</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-06-27T03:28:36.978Z" itemprop="datePublished">2018-06-27</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/direnv/">direnv</a>, <a class="tag-link" href="/tags/go/">go</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>最近<code>Web Assembly</code>（简称<code>wasm</code>）特性合并到了<code>go</code>主分支上，想尝试一下，但又不想直接把本机的<code>go</code>直接升级成<code>devel</code>版本，于是找到了<code>direnv</code>来独立一个<code>go</code>环境来测试<code>wasm</code>。</p>
+<p><a href="https://github.com/direnv/direnv" target="_blank" rel="noopener">direnv</a>是<code>shell</code>的环境切换器。它知道如何挂钩<code>bash</code>，<code>zsh</code>，<code>tcsh</code>，<code>fish</code>和<code>elvish</code>，以根据当前目录加载或卸载环境变量。这允许项目特定的环境变量而不会混淆<code>~/.profile</code>文件。</p>
+<p>在每次提示之前，<code>direnv</code>检查当前目录和父目录中是否存在<code>.envrc</code>文件。如果该文件存在（并且已被<code>allow</code>），则将其加载到子<code>shell</code>中，然后所有导出的变量将被<code>direnv</code>捕获，然后提供给当前<code>shell</code>。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>通过源码安装需要<code>go</code>版本大于<code>1.9</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/direnv/direnv</span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$GOPATH</span>/src/github.com/direnv/direnv</span><br><span class="line">make install</span><br></pre></td></tr></table></figure></p>
+<p>或使用常见的包管理软件安装，如在<code>mac</code>上使用<code>brew</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install direnv</span><br></pre></td></tr></table></figure></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="配置shell"><a href="#配置shell" class="headerlink" title="配置shell"></a>配置shell</h3><p>如<code>zsh</code>在<code>~/.zshrc</code>文件的末尾添加以下行：<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> <span class="string">"$(direnv hook zsh)"</span></span><br></pre></td></tr></table></figure></p>
+<p>其他类似，根据文档添加相应的配置。</p>
+<h3 id="配置目标目录"><a href="#配置目标目录" class="headerlink" title="配置目标目录"></a>配置目标目录</h3><p>在目标文件夹中，创建一个<code>.envrc</code>文件并在其中添加一些<code>export</code>指令。请注意，<code>.envrc</code>文件的内容必须是有效的<code>bash</code>语法，无论您使用的是何种<code>shell</code>。这是因为<code>direnv</code>总是用<code>bash</code>执行<code>.envrc</code>，这样<code>direnv</code>可以在<code>shell</code>中工作。如果尝试使用某些在<code>bash</code>中不起作用的语法（如<code>zsh</code>的嵌套扩展），会有问题。</p>
+<p>编辑完<code>.envrc</code>会看到<code>direnv</code>警告<code>direnv: error .envrc is blocked.</code>。这是避免自动加载新文件的安全机制，需要手动执行<code>direnv allow</code>批准记载并看到<code>direnv</code>加载新环境。请注意，<code>direnv edit .</code>是一个快捷方式，可以在<code>$EDITOR</code>中打开文件，并在文件被修改自动<code>allow</code>该文件。</p>
+<p>进入对应目录，环境自动加载，一旦你从目录中移出，它会自动卸载。如果回到它，它再次被加载。直接进入子目录也会加载。</p>
+<p>简单测试下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /path/to/project</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"echo 'test direnv'"</span> &gt;&gt; .envrc</span><br><span class="line">direnv allow</span><br></pre></td></tr></table></figure></p>
+<p>那么再你再进入这个目录时，就会输出<code>test direnv</code>。</p>
+<h3 id="stdlib"><a href="#stdlib" class="headerlink" title="stdlib"></a><code>stdlib</code></h3><p>手动<code>export</code>变量有点麻烦，<code>direnv</code>提供了些实用的函数可以方便的编写<code>.envrc</code>，输入<code>direnv stdlib</code>或在<a href="https://github.com/direnv/direnv/blob/master/stdlib.sh" target="_blank" rel="noopener">stdlib.sh</a>查看。也可以通过在<code>~/.config/direnv/direnvrc</code>或<code>~/.direnvrc</code>中创建一个<code>bash</code>文件来创建自己的扩展函数。创建一个独立的go环境只要在想要的目录下添加<code>.envrc</code>：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">layout <span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+<h3 id="加载分层的-envrc"><a href="#加载分层的-envrc" class="headerlink" title="加载分层的.envrc"></a>加载分层的<code>.envrc</code></h3><p>假设你有以下结构：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">└── a</span><br><span class="line">    ├── .envrc</span><br><span class="line">    └── b</span><br><span class="line">        └── .envrc</span><br></pre></td></tr></table></figure></p>
+<p>进入子目录<code>b</code>时只有<code>b</code>下的<code>.envrc</code>会生效，可以在文件里添加<code>source_env ..</code>或<code>source_up</code>来同时加载对应目录或更高级目录的<code>.envrc</code>。</p>
+<h2 id="运用"><a href="#运用" class="headerlink" title="运用"></a>运用</h2><p>使用源码安装特定的<code>go</code>版本，该版本的<code>go</code>就编译好在<code>/your/path/go/bin</code>。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your/path/</span><br><span class="line">git <span class="built_in">clone</span> https://go.googlesource.com/go</span><br><span class="line"><span class="built_in">cd</span> go</span><br><span class="line"><span class="comment"># 添加有需要特性的remote，切换到到对应的版本（分支），非必要</span></span><br><span class="line"><span class="comment"># git remote add neelance https://github.com/neelance/go</span></span><br><span class="line"><span class="comment"># git fetch --all</span></span><br><span class="line"><span class="comment"># git checkout wasm-wip  # 该分支当前已经合并到主分支上</span></span><br><span class="line"><span class="built_in">cd</span> src</span><br><span class="line">./all.bash</span><br></pre></td></tr></table></figure></p>
+<p>然后创建新的<code>GOPATH</code>目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── .envrc</span><br><span class="line">├── bin</span><br><span class="line">├── pkg</span><br><span class="line">└── src</span><br></pre></td></tr></table></figure>
+<p>并编辑<code>.envrc</code>文件</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PATH_add /your/path/<span class="keyword">go</span>/bin</span><br><span class="line">export GOROOT=<span class="string">"/your/path/go"</span></span><br><span class="line"></span><br><span class="line">layout <span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+<p><code>go version</code>查看下版本，可以看到是<code>devel</code>版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go version devel +b080abf656 Tue Jun 26 01:57:01 2018 +0000 darwin/amd64</span><br></pre></td></tr></table></figure>
+<p>在<code>src</code>创建项目目录并创建<code>main.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">println</span>(<span class="string">"Hello World, from wasm+Go"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译成<code>wasm</code>文件，可以正常编译。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GOARCH=wasm GOOS=js go build -o test.wasm main.go</span><br></pre></td></tr></table></figure></p>
+<p>然后可以配合库里的<code>misc/wasm</code>测试下，可以看到<code>console</code>输出了<code>Hello World, from wasm+Go</code>。</p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives">Articles</a></li>
+         
+          <li><a href="/search">Search</a></li>
+         
+          <li><a href="/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用"><span class="toc-number">3.</span> <span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置shell"><span class="toc-number">3.1.</span> <span class="toc-text">配置shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置目标目录"><span class="toc-number">3.2.</span> <span class="toc-text">配置目标目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stdlib"><span class="toc-number">3.3.</span> <span class="toc-text">stdlib</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#加载分层的-envrc"><span class="toc-number">3.4.</span> <span class="toc-text">加载分层的.envrc</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#运用"><span class="toc-number">4.</span> <span class="toc-text">运用</span></a></li></ol>
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 <a target="_blank" href="https://github.com/0x5010">0x5010</a>
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives">Articles</a></li>
+         
+          <li><a href="/search">Search</a></li>
+         
+          <li><a href="/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Disqus Comments -->
+
+
