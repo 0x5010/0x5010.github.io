@@ -13,7 +13,7 @@
 <meta property="og:url" content="http://blog.keyboardman.me/2018/06/28/hello-webassembly/index.html">
 <meta property="og:site_name" content="keyboardman">
 <meta property="og:description" content="概述上篇介绍了如何成功执行了Go编译的第一个WebAssembly(以下简称wasm)二进制文件，接着进一步测试下Go的wasm的能实现的功能。 从Go调用JSGo的标准库有一个新的包syscall/js，先看下js.go文件。里面定义了个新的类型js.Value，它表示一个JavaScript值。它提供了一个简单的API来操纵任何类型的JavaScript值并与之交互：  js.Value.Ge">
-<meta property="og:updated_time" content="2018-06-28T10:56:11.662Z">
+<meta property="og:updated_time" content="2018-06-28T10:57:51.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="你好WebAssembly">
 <meta name="twitter:description" content="概述上篇介绍了如何成功执行了Go编译的第一个WebAssembly(以下简称wasm)二进制文件，接着进一步测试下Go的wasm的能实现的功能。 从Go调用JSGo的标准库有一个新的包syscall/js，先看下js.go文件。里面定义了个新的类型js.Value，它表示一个JavaScript值。它提供了一个简单的API来操纵任何类型的JavaScript值并与之交互：  js.Value.Ge">
@@ -138,7 +138,7 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><a href="https://blog.keyboardman.me/2018/06/27/managing-project-env-using-direnv.md/">上篇</a>介绍了如何成功执行了<code>Go</code>编译的第一个<code>WebAssembly</code>(以下简称<code>wasm</code>)二进制文件，接着进一步测试下<code>Go</code>的<code>wasm</code>的能实现的功能。</p>
+    <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><a href="https://blog.keyboardman.me/2018/06/27/managing-project-env-using-direnv/">上篇</a>介绍了如何成功执行了<code>Go</code>编译的第一个<code>WebAssembly</code>(以下简称<code>wasm</code>)二进制文件，接着进一步测试下<code>Go</code>的<code>wasm</code>的能实现的功能。</p>
 <h2 id="从Go调用JS"><a href="#从Go调用JS" class="headerlink" title="从Go调用JS"></a>从Go调用JS</h2><p><code>Go</code>的标准库有一个新的包<code>syscall/js</code>，先看下<code>js.go</code>文件。里面定义了个新的类型<code>js.Value</code>，它表示一个<code>JavaScript</code>值。它提供了一个简单的API来操纵任何类型的<code>JavaScript</code>值并与之交互：</p>
 <ul>
 <li><code>js.Value.Get()</code>和<code>js.Value.Set()</code>检索并设置<code>Object</code>值的属性</li>
