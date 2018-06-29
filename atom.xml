@@ -66,9 +66,9 @@
     
       <category term="go" scheme="http://blog.keyboardman.me/tags/go/"/>
     
-      <category term="direnv" scheme="http://blog.keyboardman.me/tags/direnv/"/>
-    
       <category term="webassembly" scheme="http://blog.keyboardman.me/tags/webassembly/"/>
+    
+      <category term="direnv" scheme="http://blog.keyboardman.me/tags/direnv/"/>
     
   </entry>
   
