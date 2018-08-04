@@ -62,9 +62,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -82,10 +82,10 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
+      <span id="i-prev" class="info" style="display:none;">Articolo precedente</span>
+      <span id="i-next" class="info" style="display:none;">Articolo successivo</span>
+      <span id="i-top" class="info" style="display:none;">Torna all&#39;inizio</span>
+      <span id="i-share" class="info" style="display:none;">Condividi articolo</span>
     </span>
     <br/>
     <div id="share" style="display: none">
@@ -172,7 +172,7 @@
 <p>然后可以拷贝源码里的<code>misc/wasm</code>下文件到同目录，只需要构建一个名为<code>test.wasm</code>的文件，我们就可以重用<code>wasm_exec.html</code>和<code>wasm_exec.js</code>。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GOARCH=wasm GOOS=js go build -o test.wasm main.go</span><br></pre></td></tr></table></figure>
 <p>开启个静态服务。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"flag"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	addr := flag.String(<span class="string">"addr"</span>, <span class="string">":8000"</span>, <span class="string">"server address:port"</span>)</span><br><span class="line">	flag.Parse()</span><br><span class="line">	srv := http.FileServer(http.Dir(<span class="string">"."</span>))</span><br><span class="line">	log.Printf(<span class="string">"listening on %q..."</span>, *addr)</span><br><span class="line">	log.Fatal(http.ListenAndServe(*addr, srv))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"flag"</span></span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    addr := flag.String(<span class="string">"addr"</span>, <span class="string">":8000"</span>, <span class="string">"server address:port"</span>)</span><br><span class="line">    flag.Parse()</span><br><span class="line">    srv := http.FileServer(http.Dir(<span class="string">"."</span>))</span><br><span class="line">    log.Printf(<span class="string">"listening on %q..."</span>, *addr)</span><br><span class="line">    log.Fatal(http.ListenAndServe(*addr, srv))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>并访问<code>wasm_exec.html</code>，点击按钮可以看到<code>console</code>输出了<code>Hello World, from wasm+Go</code>。</p>
 
   </div>
@@ -190,9 +190,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -223,9 +223,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         

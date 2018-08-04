@@ -62,9 +62,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -82,10 +82,10 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
+      <span id="i-prev" class="info" style="display:none;">Articolo precedente</span>
+      <span id="i-next" class="info" style="display:none;">Articolo successivo</span>
+      <span id="i-top" class="info" style="display:none;">Torna all&#39;inizio</span>
+      <span id="i-share" class="info" style="display:none;">Condividi articolo</span>
     </span>
     <br/>
     <div id="share" style="display: none">
@@ -155,8 +155,8 @@
 <p>server应该使用一个空字符串作为server的整体运行状况的关键字，以便对特定service不感兴趣的client可以用空请求查询服务器的状态。server可以在不支持任何通配符匹配的情况下完成对service名称的精确匹配。但是，service所有者可以自由地实现对client和server一致更复杂的匹配语义。</p>
 <p>client如果rpc一段时间后没有完成可以宣布server不健康。client应该能够处理server没有<code>Health</code> service的情况。</p>
 <hr>
-<h2 id="grpc-go"><a href="#grpc-go" class="headerlink" title="grpc-go"></a>grpc-go</h2><p><code>grpc-go</code>本身就有实现这个server，我们可以很方便的嵌入到我们的grpc服务中。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"google.golang.org/grpc"</span></span><br><span class="line">	healthpb <span class="string">"google.golang.org/grpc/health/grpc_health_v1"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">s := grpc.NewServer()</span><br><span class="line">pb.RegisterMyServer(s, &amp;myServer&#123;&#125;)</span><br><span class="line"><span class="comment">// add </span></span><br><span class="line">hsrv := health.NewServer()</span><br><span class="line">hsrv.SetServingStatus(<span class="string">""</span>, healthpb.HealthCheckResponse_SERVING)</span><br><span class="line">healthpb.RegisterHealthServer(s, hsrv)</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
-<p>client部分跟所有正常grpc请求一样，编写下测试代码。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cli := healthpb.NewHealthClient(grpcConn)</span><br><span class="line">resp, err := cli.Check(context.TODO(), &amp;healthpb.HealthCheckRequest&#123;&#125;)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> error</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> resp.Status != healthpb.HealthCheckResponse_SERVING &#123;</span><br><span class="line">	<span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="grpc-go"><a href="#grpc-go" class="headerlink" title="grpc-go"></a>grpc-go</h2><p><code>grpc-go</code>本身就有实现这个server，我们可以很方便的嵌入到我们的grpc服务中。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"google.golang.org/grpc"</span></span><br><span class="line">    healthpb <span class="string">"google.golang.org/grpc/health/grpc_health_v1"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">s := grpc.NewServer()</span><br><span class="line">pb.RegisterMyServer(s, &amp;myServer&#123;&#125;)</span><br><span class="line"><span class="comment">// add </span></span><br><span class="line">hsrv := health.NewServer()</span><br><span class="line">hsrv.SetServingStatus(<span class="string">""</span>, healthpb.HealthCheckResponse_SERVING)</span><br><span class="line">healthpb.RegisterHealthServer(s, hsrv)</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>client部分跟所有正常grpc请求一样，编写下测试代码。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cli := healthpb.NewHealthClient(grpcConn)</span><br><span class="line">resp, err := cli.Check(context.TODO(), &amp;healthpb.HealthCheckRequest&#123;&#125;)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> error</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> resp.Status != healthpb.HealthCheckResponse_SERVING &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>很简单就嵌入了健康检查的功能，当然client对状态的判断处理要根据实际场景情况进行相应的处理。</p>
 
   </div>
@@ -174,9 +174,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -207,9 +207,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         

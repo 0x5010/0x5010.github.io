@@ -62,9 +62,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -82,10 +82,10 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
+      <span id="i-prev" class="info" style="display:none;">Articolo precedente</span>
+      <span id="i-next" class="info" style="display:none;">Articolo successivo</span>
+      <span id="i-top" class="info" style="display:none;">Torna all&#39;inizio</span>
+      <span id="i-share" class="info" style="display:none;">Condividi articolo</span>
     </span>
     <br/>
     <div id="share" style="display: none">
@@ -155,7 +155,7 @@
 <p>我们先尝试下，跟着<a href="https://research.swtch.com/vgo-tour" target="_blank" rel="noopener">官方示例</a>。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir <span class="variable">$GOPATH</span>/src/hello</span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$GOPATH</span>/src/hello</span><br><span class="line">curl -sS https://swtch.com/hello.go &gt; hello.go</span><br></pre></td></tr></table></figure>
 <p>我们看一下<code>hello.go</code>的内容。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main <span class="comment">// import "github.com/you/hello"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"rsc.io/quote"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(quote.Hello())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main <span class="comment">// import "github.com/you/hello"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"rsc.io/quote"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Println(quote.Hello())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其中<code>// import &quot;github.com/you/hello&quot;</code>注释用来告诉vgo模块的“导入路径名称”应该是什么，并且使用此模块的其他软件包将用作导入标识符。<br>创建一个空的go.mod文件来标记此项目的根目录，然后编译一下。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> &gt;go.mod</span><br><span class="line">vgo build</span><br></pre></td></tr></table></figure>
 <p>可以看到生成可执行文件，并修改了<code>go.mod</code>的内容，自动生成了依赖关系。</p>
@@ -170,7 +170,7 @@
 <p>这时候需要获取github token，在github网站依次点击<code>Settings</code>-<code>Developer settings</code>-<code>Personal access tokens</code>-<code>Generate new token</code>，填写名字和勾选权限后生成token。创建或修改<code>$HOME/.netrc</code>文件，添加下行，把生成的token填写进去，就能解决了。</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">machine api.github.<span class="keyword">com</span> login YOU password TOKEN</span><br></pre></td></tr></table></figure>
 <p>目前vgo的文档不够完善，代码也不够健壮，在生产环境可能还不适合去使用。我在测试时就遇到了些问题，比如有的<code>gopkg.in</code>仓库使用标签而不是分支来标记主要版本。当前vgo处理这些仓库会出错。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	_ <span class="string">"gopkg.in/natefinch/lumberjack.v2"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    _ <span class="string">"gopkg.in/natefinch/lumberjack.v2"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 <p>将得到如下错误。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import <span class="string">"gopkg.in/natefinch/lumberjack.v2"</span>: unexpected status (https://api.github.com/repos/natefinch/lumberjack/commits?sha=v2&amp;until=2018-02-23T03%3A49%3A22Z&amp;per_page=2): 404 Not Found</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">vgo: import <span class="string">"gopkg.in/natefinch/lumberjack.v2"</span>: unexpected status (https://api.github.com/repos/natefinch/lumberjack): 403 Forbidden</span><br></pre></td></tr></table></figure>
 <p>不过vgo应该很快就会修复这些问题。</p>
@@ -190,9 +190,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -223,9 +223,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         

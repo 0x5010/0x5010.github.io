@@ -62,9 +62,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -82,10 +82,10 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
+      <span id="i-prev" class="info" style="display:none;">Articolo precedente</span>
+      <span id="i-next" class="info" style="display:none;">Articolo successivo</span>
+      <span id="i-top" class="info" style="display:none;">Torna all&#39;inizio</span>
+      <span id="i-share" class="info" style="display:none;">Condividi articolo</span>
     </span>
     <br/>
     <div id="share" style="display: none">
@@ -151,7 +151,7 @@
 <h3 id="令牌桶算法"><a href="#令牌桶算法" class="headerlink" title="令牌桶算法"></a>令牌桶算法</h3><p>和漏桶算法效果类似但方向相反的算法。桶一开始是空的，token（令牌）以一个固定的速率r往桶里填充，直到达到桶的容量，多余的token将会被丢弃。每当一个请求过来时，就会尝试从桶里移除一个token，如果没有token的话，请求无法通过。令牌桶还可以方便的改变速度。 一旦需要提高速率,只要按需提高放入桶中的token的速率就行了。令牌桶算法允许流量一定程度的突发，取走token是不需要耗费时间的，也就是说，假设桶内有100个token时，那么可以瞬间允许100个请求通过。</p>
 <h3 id="算法总结"><a href="#算法总结" class="headerlink" title="算法总结"></a>算法总结</h3><p>令牌桶算法由于实现简单，且允许某些流量的突发，对用户友好，所以被业界采用地较多。当然我们需要根据具体场景选择合适的算法。</p>
 <h2 id="在go中的使用"><a href="#在go中的使用" class="headerlink" title="在go中的使用"></a>在go中的使用</h2><p><code>Go</code>提供了一个package(golang.org/x/time/rate)，采用令牌桶的算法实现，用来方便的对速度进行限制。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Limiter <span class="keyword">struct</span> &#123;</span><br><span class="line">	limit Limit</span><br><span class="line">	burst <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	mu     sync.Mutex</span><br><span class="line">	tokens <span class="keyword">float64</span></span><br><span class="line">	last time.Time</span><br><span class="line">	lastEvent time.Time</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewLimiter</span><span class="params">(r Limit, b <span class="keyword">int</span>)</span> *<span class="title">Limiter</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Limiter <span class="keyword">struct</span> &#123;</span><br><span class="line">    limit Limit</span><br><span class="line">    burst <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">    mu     sync.Mutex</span><br><span class="line">    tokens <span class="keyword">float64</span></span><br><span class="line">    last time.Time</span><br><span class="line">    lastEvent time.Time</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewLimiter</span><span class="params">(r Limit, b <span class="keyword">int</span>)</span> *<span class="title">Limiter</span></span></span><br></pre></td></tr></table></figure>
 <p>首先创建一个<code>rate.Limiter</code>，其有两个参数，第一个参数为允许每秒发生多少次事件，第二个参数是其缓存最大可存多少个事件。这个桶一开始容量为b，装满b个token，然后每秒往里面填充r个token。由于令牌桶中最多有b个token，所以一次最多只能允许b个事件发生，一个事件花费掉一个token。</p>
 <p><code>rate.Limiter</code>提供三种主要的函数。</p>
 <h3 id="Wait-WaitN"><a href="#Wait-WaitN" class="headerlink" title="Wait/WaitN"></a><code>Wait/WaitN</code></h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(lim *Limiter)</span> <span class="title">Wait</span><span class="params">(ctx context.Context)</span> <span class="params">(err error)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="params">(lim *Limiter)</span> <span class="title">WaitN</span><span class="params">(ctx context.Context, n <span class="keyword">int</span>)</span> <span class="params">(err error)</span></span></span><br></pre></td></tr></table></figure>
@@ -160,7 +160,7 @@
 <p><code>Allow</code>是函数<code>AllowN(time.Now(), 1)</code>的简化函数。<code>AllowN</code>标识在时间<code>now</code>的时候，n个事件是否可以同时发生(也意思就是now的时候是否可以从令牌桶中取n个token)。适合在超出频率的时候丢弃或跳过事件的场景。</p>
 <h3 id="Reserve-ReserveN"><a href="#Reserve-ReserveN" class="headerlink" title="Reserve/ReserveN"></a><code>Reserve/ReserveN</code></h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(lim *Limiter)</span> <span class="title">Reserve</span><span class="params">()</span> *<span class="title">Reservation</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="params">(lim *Limiter)</span> <span class="title">ReserveN</span><span class="params">(now time.Time, n <span class="keyword">int</span>)</span> *<span class="title">Reservation</span></span></span><br></pre></td></tr></table></figure>
 <p><code>Reserve</code>是<code>ReserveN(time.Now(), 1)</code>的简化形式。<code>ReserveN</code>返回对象<code>Reservation</code>，用于标识调用者需要等多久才能等到n个事件发生(意思就是等多久令牌桶中至少含有n个token)。<code>Wait/WaitN</code>和<code>Allow/AllowN</code>其实就是基于其之上实现的，通过sleep等待时间和直接返回状态。如果想对事件发生的频率和等待处理逻辑更加精细的话就可以使用它。</p>
-<h3 id="example"><a href="#example" class="headerlink" title="example"></a>example</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"context"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"golang.org/x/time/rate"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	l := rate.NewLimiter(<span class="number">2</span>, <span class="number">5</span>)</span><br><span class="line">	ctx := context.Background()</span><br><span class="line">	start := time.Now()</span><br><span class="line">	<span class="comment">// 要处理二十个事件</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">20</span>; i++ &#123;</span><br><span class="line">		l.Wait(ctx)</span><br><span class="line">		<span class="comment">// dosomething</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(time.Since(start)) <span class="comment">// output: 7.501262697s （初始桶内5个和每秒2个token）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="example"><a href="#example" class="headerlink" title="example"></a>example</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"context"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"golang.org/x/time/rate"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    l := rate.NewLimiter(<span class="number">2</span>, <span class="number">5</span>)</span><br><span class="line">    ctx := context.Background()</span><br><span class="line">    start := time.Now()</span><br><span class="line">    <span class="comment">// 要处理二十个事件</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">20</span>; i++ &#123;</span><br><span class="line">        l.Wait(ctx)</span><br><span class="line">        <span class="comment">// dosomething</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(time.Since(start)) <span class="comment">// output: 7.501262697s （初始桶内5个和每秒2个token）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
   </div>
 </article>
@@ -177,9 +177,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -210,9 +210,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articles</a></li>
+          <li><a href="/archives">Articoli</a></li>
          
-          <li><a href="/search">Search</a></li>
+          <li><a href="/search">Cerca</a></li>
          
           <li><a href="/about">About</a></li>
         
