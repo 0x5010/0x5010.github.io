@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="概述使用gRPC的一个问题是，它的默认最大消息大小默认被设置为4MB，那么当数据量太大时该怎么办？ options可以通过在创建Server的时候，配置相关的参数来扩大限制最小消息大小的值。 1s := grpc.NewServer(grpc.MaxRecvMsgSize(size), grpc.MaxSendMsgSize(size)) MaxRecvMsgSize和MaxSendMsgSize">
+<meta name="keywords" content="go,grpc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gRPC的大消息传输">
+<meta property="og:url" content="http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/index.html">
+<meta property="og:site_name" content="keyboardman">
+<meta property="og:description" content="概述使用gRPC的一个问题是，它的默认最大消息大小默认被设置为4MB，那么当数据量太大时该怎么办？ options可以通过在创建Server的时候，配置相关的参数来扩大限制最小消息大小的值。 1s := grpc.NewServer(grpc.MaxRecvMsgSize(size), grpc.MaxSendMsgSize(size)) MaxRecvMsgSize和MaxSendMsgSize">
+<meta property="og:updated_time" content="2018-08-06T08:20:53.098Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gRPC的大消息传输">
+<meta name="twitter:description" content="概述使用gRPC的一个问题是，它的默认最大消息大小默认被设置为4MB，那么当数据量太大时该怎么办？ options可以通过在创建Server的时候，配置相关的参数来扩大限制最小消息大小的值。 1s := grpc.NewServer(grpc.MaxRecvMsgSize(size), grpc.MaxSendMsgSize(size)) MaxRecvMsgSize和MaxSendMsgSize">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
+          
+        
+    
+    <!-- title -->
+    <title>gRPC的大消息传输</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="keyboardman" type="application/atom+xml" />
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives">Articles</a></li>
+         
+          <li><a href="/search">Search</a></li>
+         
+          <li><a href="/about">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2018/07/30/go-and-json/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&title=gRPC的大消息传输""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&text=gRPC的大消息传输"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&title=gRPC的大消息传输"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&is_video=false&description=gRPC的大消息传输"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=gRPC的大消息传输&body=Check out this article: http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&title=gRPC的大消息传输"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&title=gRPC的大消息传输"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&title=gRPC的大消息传输"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&title=gRPC的大消息传输"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/&name=gRPC的大消息传输&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#options"><span class="toc-number">2.</span> <span class="toc-text">options</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#chunk"><span class="toc-number">3.</span> <span class="toc-text">chunk</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#range"><span class="toc-number">4.</span> <span class="toc-text">range</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        gRPC的大消息传输
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">0x5010</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-08-06T08:13:55.039Z" itemprop="datePublished">2018-08-06</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/go/">go</a>, <a class="tag-link" href="/tags/grpc/">grpc</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>使用<code>gRPC</code>的一个问题是，它的默认最大消息大小默认被设置为<code>4MB</code>，那么当数据量太大时该怎么办？</p>
+<h2 id="options"><a href="#options" class="headerlink" title="options"></a>options</h2><p>可以通过在创建<code>Server</code>的时候，配置相关的参数来扩大限制最小消息大小的值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s := grpc.NewServer(grpc.MaxRecvMsgSize(size), grpc.MaxSendMsgSize(size))</span><br></pre></td></tr></table></figure>
+<p><code>MaxRecvMsgSize</code>和<code>MaxSendMsgSize</code>分别设置服务器可以接收的最大消息大小和可以发送的最大消息大小（以字节为单位）。不设置的话默认都是<code>4MB</code>。</p>
+<p>虽然可以配置，但这种行为是一种滑坡谬误，可能会导致不断修改增加服务端客户端最大消息大小，而且每次请求不一定都需要全部的数据，会导致很多性能和资源上的浪费。</p>
+<h2 id="chunk"><a href="#chunk" class="headerlink" title="chunk"></a>chunk</h2><p>自然地将数据分成更小的块并使用<code>gRPC</code>流方法（<code>stream</code>）对其进行流式传输是一个不错的选择。</p>
+<p>首先一个<code>proto</code>，是一个返回流式消息类型的<code>rpc service</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line"></span><br><span class="line">package pb;</span><br><span class="line"></span><br><span class="line">service Chunker &#123;</span><br><span class="line">    rpc Chunker(Empty) returns (stream Chunk) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message Empty&#123;&#125;</span><br><span class="line"></span><br><span class="line">message Chunk &#123;</span><br><span class="line">    bytes chunk = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实现<code>server</code>的<code>Chunker</code>逻辑。流式消息的大小设置为<code>64KB</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> chunkSize = <span class="number">64</span> * <span class="number">1024</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> chunkerSrv []<span class="keyword">byte</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c chunkerSrv)</span> <span class="title">Chunker</span><span class="params">(_ *pb.Empty, srv pb.Chunker_ChunkerServer)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    chunk := &amp;pb.Chunk&#123;&#125;</span><br><span class="line">    n := <span class="built_in">len</span>(c)</span><br><span class="line">    <span class="keyword">for</span> cur := <span class="number">0</span>; cur &lt; n; cur += chunkSize &#123;</span><br><span class="line">        <span class="keyword">if</span> cur+chunkSize &gt; n &#123;</span><br><span class="line">            chunk.Chunk = c[cur:n]</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            chunk.Chunk = c[cur : cur+chunkSize]</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> err := srv.Send(chunk); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后把<code>gRPC</code>服务端运行起来，使用随机填充<code>128M</code>的数据来方便测试。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    listen, err := net.Listen(<span class="string">"tcp"</span>, <span class="string">":8888"</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">    s := grpc.NewServer()</span><br><span class="line">    blob := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">128</span>*<span class="number">1024</span>*<span class="number">1024</span>) <span class="comment">// 128M</span></span><br><span class="line">    rand.Read(blob)</span><br><span class="line">    pb.RegisterChunkerServer(s, chunkerSrv(blob))</span><br><span class="line">    log.Println(<span class="string">"serving on localhost:8888"</span>)</span><br><span class="line">    log.Fatal(s.Serve(listen))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编写个客户端请求一下。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    conn, err := grpc.Dial(<span class="string">"localhost:8888"</span>, grpc.WithInsecure())</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">    client := pb.NewChunkerClient(conn)</span><br><span class="line">    stream, err := client.Chunker(context.Background(), &amp;pb.Empty&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> blob []<span class="keyword">byte</span></span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        c, err := stream.Recv()</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> err == io.EOF &#123;</span><br><span class="line">                log.Printf(<span class="string">"Transfer of %d bytes successful"</span>, <span class="built_in">len</span>(blob))</span><br><span class="line">                <span class="comment">// Transfer of 134217728 bytes successful</span></span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">            log.Fatal(err)</span><br><span class="line">        &#125;</span><br><span class="line">        blob = <span class="built_in">append</span>(blob, c.Chunk...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用分块传输编码，数据分解成一系列数据块，并以一个或多个块发送，这样客户端自己再拼接成完整的数据，无论多少数据都可以不用修改配置。</p>
+<p><a href="https://github.com/0x5010/example/tree/master/grpc/chunker" target="_blank" rel="noopener">完整代码</a></p>
+<h2 id="range"><a href="#range" class="headerlink" title="range"></a>range</h2><p>在数据量大的情况，不是每次都需要请求全量的数据。基于之上可以借鉴<code>http</code>的<code>range</code>协议来分片的取获取资源。同样的在<code>Chunker</code>的<code>proto</code>基础上修改，在请求的时候能传入零个（代表全部获取）或多个<code>Range</code>来分片获取资源。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line"></span><br><span class="line">package pb;</span><br><span class="line"></span><br><span class="line">service RangeChunker &#123;</span><br><span class="line">    rpc Range(Res) returns (stream Chunk) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message Res &#123;</span><br><span class="line">    repeated Range r = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message Range &#123;</span><br><span class="line">    int32 start = 1;</span><br><span class="line">    int32 stop = 2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message Chunk &#123;</span><br><span class="line">    bytes chunk = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>服务端的实现主要是<code>Range</code>的解析，这里实现和<code>http</code>的<code>range</code>类似，使用<code>0-99</code>代表前100字节而不是<code>0-100</code>，并简化了很多，比如只保留了<code>stop</code>设置<code>-1</code>时代表最后一个字节，其他的负数操作都没有实现。需要的话可以自行修改<code>rangeLimit</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> chunkSize = <span class="number">64</span> * <span class="number">1024</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> chunkerSrv []<span class="keyword">byte</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c chunkerSrv)</span> <span class="title">Range</span><span class="params">(r *pb.Res, srv pb.RangeChunker_RangeServer)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    chunk := &amp;pb.Chunk&#123;&#125;</span><br><span class="line">    ranges := c.parseRanges(r)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> _, rr := <span class="keyword">range</span> ranges &#123;</span><br><span class="line">        start, stop := rr[<span class="number">0</span>], rr[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">for</span> cur := start; cur &lt; stop; cur += chunkSize &#123;</span><br><span class="line">            <span class="keyword">if</span> cur+chunkSize &gt; stop &#123;</span><br><span class="line">                chunk.Chunk = c[cur:stop]</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                chunk.Chunk = c[cur : cur+chunkSize]</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> err := srv.Send(chunk); err != <span class="literal">nil</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> err</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c chunkerSrv)</span> <span class="title">parseRanges</span><span class="params">(r *pb.Res)</span> [][2]<span class="title">int</span></span> &#123;</span><br><span class="line">    n := <span class="built_in">len</span>(c)</span><br><span class="line">    ranges := [][<span class="number">2</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">    rs := r.GetR()</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(rs) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> [][<span class="number">2</span>]<span class="keyword">int</span>&#123;[<span class="number">2</span>]<span class="keyword">int</span>&#123;<span class="number">0</span>, n&#125;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> _, rr := <span class="keyword">range</span> rs &#123;</span><br><span class="line">        start, stop := rangeLimit(rr, n)</span><br><span class="line">        <span class="keyword">if</span> start == <span class="number">-1</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">        ranges = <span class="built_in">append</span>(ranges, [<span class="number">2</span>]<span class="keyword">int</span>&#123;start, stop&#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ranges</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">rangeLimit</span><span class="params">(r *pb.Range, llen <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    start, stop := <span class="keyword">int</span>(r.Start), <span class="keyword">int</span>(r.Stop)+<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> stop &gt; llen || stop == <span class="number">0</span> &#123;</span><br><span class="line">        stop = llen</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> start &lt; <span class="number">0</span> || stop &lt; <span class="number">0</span> || start &gt;= stop &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>, <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> start, stop</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端请求也很简单。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">stream, err := client.Range(context.Background(), &amp;pb.Res&#123;</span><br><span class="line">    R: []*pb.Range&#123;</span><br><span class="line">        &#123;<span class="number">0</span>, <span class="number">99</span>&#125;,</span><br><span class="line">        &#123;<span class="number">100</span>, <span class="number">199</span>&#125;,</span><br><span class="line">        &#123;<span class="number">200</span>, <span class="number">-1</span>&#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/0x5010/example/tree/master/grpc/range" target="_blank" rel="noopener">完整代码</a></p>
+<p>这样我们就可以只请求资源的某个部分，基于此之上还可以并行请求，断点续传等。</p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives">Articles</a></li>
+         
+          <li><a href="/search">Search</a></li>
+         
+          <li><a href="/about">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#options"><span class="toc-number">2.</span> <span class="toc-text">options</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#chunk"><span class="toc-number">3.</span> <span class="toc-text">chunk</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#range"><span class="toc-number">4.</span> <span class="toc-text">range</span></a></li></ol>
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 <a target="_blank" href="https://github.com/0x5010">0x5010</a>
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives">Articles</a></li>
+         
+          <li><a href="/search">Search</a></li>
+         
+          <li><a href="/about">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?af499629377f90220c1018496dbbefe4";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+

@@ -9,13 +9,13 @@
     <meta name="description" content="原文：gRPC Connectivity Semantics and API译文：gitbook译者：0x5010  doc本文档描述了gRPC通道的连接语义以及对RPC的相应影响。然后我们浅谈下API。 连接状态gRPC抽象了客户端与服务器进行通信的方式。客户端通道对象可以使用多于一个DNS名称来创建。通道封装了一系列功能，包括名称解析，建立TCP连接(带有retry和backoff)以及TL">
 <meta name="keywords" content="go,grpc,doc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="grpc-go-连接语义和API">
+<meta property="og:title" content="grpc-go 连接语义和API">
 <meta property="og:url" content="http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/index.html">
 <meta property="og:site_name" content="keyboardman">
 <meta property="og:description" content="原文：gRPC Connectivity Semantics and API译文：gitbook译者：0x5010  doc本文档描述了gRPC通道的连接语义以及对RPC的相应影响。然后我们浅谈下API。 连接状态gRPC抽象了客户端与服务器进行通信的方式。客户端通道对象可以使用多于一个DNS名称来创建。通道封装了一系列功能，包括名称解析，建立TCP连接(带有retry和backoff)以及TL">
-<meta property="og:updated_time" content="2018-03-13T13:40:12.000Z">
+<meta property="og:updated_time" content="2018-08-06T08:19:48.027Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="grpc-go-连接语义和API">
+<meta name="twitter:title" content="grpc-go 连接语义和API">
 <meta name="twitter:description" content="原文：gRPC Connectivity Semantics and API译文：gitbook译者：0x5010  doc本文档描述了gRPC通道的连接语义以及对RPC的相应影响。然后我们浅谈下API。 连接状态gRPC抽象了客户端与服务器进行通信的方式。客户端通道对象可以使用多于一个DNS名称来创建。通道封装了一系列功能，包括名称解析，建立TCP连接(带有retry和backoff)以及TL">
     
     
@@ -36,7 +36,7 @@
         
     
     <!-- title -->
-    <title>grpc-go-连接语义和API</title>
+    <title>grpc-go 连接语义和API</title>
     <!-- styles -->
     <link rel="stylesheet" href="/css/style.css">
     <!-- persian styles -->
@@ -62,9 +62,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -82,25 +82,25 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Articolo precedente</span>
-      <span id="i-next" class="info" style="display:none;">Articolo successivo</span>
-      <span id="i-top" class="info" style="display:none;">Torna all&#39;inizio</span>
-      <span id="i-share" class="info" style="display:none;">Condividi articolo</span>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
     </span>
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go-连接语义和API""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go 连接语义和API""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&text=grpc-go-连接语义和API"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go-连接语义和API"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&is_video=false&description=grpc-go-连接语义和API"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=grpc-go-连接语义和API&body=Check out this article: http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go-连接语义和API"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go-连接语义和API"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go-连接语义和API"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go-连接语义和API"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&name=grpc-go-连接语义和API&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&text=grpc-go 连接语义和API"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go 连接语义和API"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&is_video=false&description=grpc-go 连接语义和API"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=grpc-go 连接语义和API&body=Check out this article: http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go 连接语义和API"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go 连接语义和API"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go 连接语义和API"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&title=grpc-go 连接语义和API"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/02/08/grpc-doc-with-grpc-connectivity-semantics-and-api/&name=grpc-go 连接语义和API&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -117,7 +117,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        grpc-go-连接语义和API
+        grpc-go 连接语义和API
     </h1>
 
 
@@ -238,9 +238,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -271,9 +271,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         

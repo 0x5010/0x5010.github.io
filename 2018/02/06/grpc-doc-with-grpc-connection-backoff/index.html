@@ -9,13 +9,13 @@
     <meta name="description" content="原文：gRPC Connection Backoff Protocol译文：gitbook译者：0x5010  doc当我们连接到一个失败的后端时，通常希望不要立即重试(以避免泛滥的网络或服务器的请求)，而是做某种形式的指数backoff。 我们有几个参数：  INITIAL_BACKOFF (第一次失败重试前后需等待多久) MULTIPLIER (在失败的重试后乘以的倍数) JITTER (随">
 <meta name="keywords" content="go,grpc,doc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="grpc-go-连接backoff协议">
+<meta property="og:title" content="grpc-go 连接backoff协议">
 <meta property="og:url" content="http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/index.html">
 <meta property="og:site_name" content="keyboardman">
 <meta property="og:description" content="原文：gRPC Connection Backoff Protocol译文：gitbook译者：0x5010  doc当我们连接到一个失败的后端时，通常希望不要立即重试(以避免泛滥的网络或服务器的请求)，而是做某种形式的指数backoff。 我们有几个参数：  INITIAL_BACKOFF (第一次失败重试前后需等待多久) MULTIPLIER (在失败的重试后乘以的倍数) JITTER (随">
-<meta property="og:updated_time" content="2018-03-13T13:39:27.000Z">
+<meta property="og:updated_time" content="2018-08-06T08:19:34.844Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="grpc-go-连接backoff协议">
+<meta name="twitter:title" content="grpc-go 连接backoff协议">
 <meta name="twitter:description" content="原文：gRPC Connection Backoff Protocol译文：gitbook译者：0x5010  doc当我们连接到一个失败的后端时，通常希望不要立即重试(以避免泛滥的网络或服务器的请求)，而是做某种形式的指数backoff。 我们有几个参数：  INITIAL_BACKOFF (第一次失败重试前后需等待多久) MULTIPLIER (在失败的重试后乘以的倍数) JITTER (随">
     
     
@@ -36,7 +36,7 @@
         
     
     <!-- title -->
-    <title>grpc-go-连接backoff协议</title>
+    <title>grpc-go 连接backoff协议</title>
     <!-- styles -->
     <link rel="stylesheet" href="/css/style.css">
     <!-- persian styles -->
@@ -62,9 +62,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -82,25 +82,25 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Articolo precedente</span>
-      <span id="i-next" class="info" style="display:none;">Articolo successivo</span>
-      <span id="i-top" class="info" style="display:none;">Torna all&#39;inizio</span>
-      <span id="i-share" class="info" style="display:none;">Condividi articolo</span>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
     </span>
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go-连接backoff协议""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go 连接backoff协议""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&text=grpc-go-连接backoff协议"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go-连接backoff协议"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&is_video=false&description=grpc-go-连接backoff协议"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=grpc-go-连接backoff协议&body=Check out this article: http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go-连接backoff协议"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go-连接backoff协议"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go-连接backoff协议"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go-连接backoff协议"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&name=grpc-go-连接backoff协议&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&text=grpc-go 连接backoff协议"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go 连接backoff协议"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&is_video=false&description=grpc-go 连接backoff协议"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=grpc-go 连接backoff协议&body=Check out this article: http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go 连接backoff协议"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go 连接backoff协议"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go 连接backoff协议"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&title=grpc-go 连接backoff协议"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/02/06/grpc-doc-with-grpc-connection-backoff/&name=grpc-go 连接backoff协议&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -117,7 +117,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        grpc-go-连接backoff协议
+        grpc-go 连接backoff协议
     </h1>
 
 
@@ -181,9 +181,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -214,9 +214,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         

@@ -9,13 +9,13 @@
     <meta name="description" content="原文：gRPC Health Checking Protocol译文：gitbook译者：0x5010  doc健康检查用于探测服务器是否能够处理rpc。client到server的健康状况检查可能会发生在点对点或通过某个控制系统。server可能会选择回复“不健康”，因为它没有准备好接受请求，正在关闭或其他原因。如果在一段时间内没有收到回复，或者回复内容不健康，client可以采取相应措施。">
 <meta name="keywords" content="go,grpc,doc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="grpc-go-健康检查">
+<meta property="og:title" content="grpc-go 健康检查">
 <meta property="og:url" content="http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/index.html">
 <meta property="og:site_name" content="keyboardman">
 <meta property="og:description" content="原文：gRPC Health Checking Protocol译文：gitbook译者：0x5010  doc健康检查用于探测服务器是否能够处理rpc。client到server的健康状况检查可能会发生在点对点或通过某个控制系统。server可能会选择回复“不健康”，因为它没有准备好接受请求，正在关闭或其他原因。如果在一段时间内没有收到回复，或者回复内容不健康，client可以采取相应措施。">
-<meta property="og:updated_time" content="2018-03-13T13:40:35.000Z">
+<meta property="og:updated_time" content="2018-08-06T08:19:58.489Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="grpc-go-健康检查">
+<meta name="twitter:title" content="grpc-go 健康检查">
 <meta name="twitter:description" content="原文：gRPC Health Checking Protocol译文：gitbook译者：0x5010  doc健康检查用于探测服务器是否能够处理rpc。client到server的健康状况检查可能会发生在点对点或通过某个控制系统。server可能会选择回复“不健康”，因为它没有准备好接受请求，正在关闭或其他原因。如果在一段时间内没有收到回复，或者回复内容不健康，client可以采取相应措施。">
     
     
@@ -36,7 +36,7 @@
         
     
     <!-- title -->
-    <title>grpc-go-健康检查</title>
+    <title>grpc-go 健康检查</title>
     <!-- styles -->
     <link rel="stylesheet" href="/css/style.css">
     <!-- persian styles -->
@@ -62,9 +62,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -82,25 +82,25 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Articolo precedente</span>
-      <span id="i-next" class="info" style="display:none;">Articolo successivo</span>
-      <span id="i-top" class="info" style="display:none;">Torna all&#39;inizio</span>
-      <span id="i-share" class="info" style="display:none;">Condividi articolo</span>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
     </span>
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go-健康检查""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://service.weibo.com/share/share.php?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go 健康检查""><i class="fab fa-weibo " aria-hidden="true"></i></a></li>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&text=grpc-go-健康检查"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go-健康检查"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&is_video=false&description=grpc-go-健康检查"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=grpc-go-健康检查&body=Check out this article: http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go-健康检查"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go-健康检查"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go-健康检查"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go-健康检查"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&name=grpc-go-健康检查&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&text=grpc-go 健康检查"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go 健康检查"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&is_video=false&description=grpc-go 健康检查"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=grpc-go 健康检查&body=Check out this article: http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go 健康检查"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go 健康检查"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go 健康检查"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&title=grpc-go 健康检查"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.keyboardman.me/2018/02/05/grpc-doc-with-grpc-go-health-checking/&name=grpc-go 健康检查&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -117,7 +117,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        grpc-go-健康检查
+        grpc-go 健康检查
     </h1>
 
 
@@ -174,9 +174,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -207,9 +207,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         

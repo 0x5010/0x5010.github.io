@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="概述最近Web Assembly（简称wasm）特性合并到了go主分支上，想尝试一下，但又不想直接把本机的go直接升级成devel版本，于是找到了direnv来独立一个go环境来测试wasm。 direnv是shell的环境切换器。它知道如何挂钩bash，zsh，tcsh，fish和elvish，以根据当前目录加载或卸载环境变量。这允许项目特定的环境变量而不会混淆~/.profile文件。 在每次">
-<meta name="keywords" content="go,direnv,webassembly">
+<meta name="keywords" content="go,webassembly,direnv">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用direnv来独立项目环境">
 <meta property="og:url" content="http://blog.keyboardman.me/2018/06/27/managing-project-env-using-direnv/index.html">
@@ -62,9 +62,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -82,10 +82,10 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Articolo precedente</span>
-      <span id="i-next" class="info" style="display:none;">Articolo successivo</span>
-      <span id="i-top" class="info" style="display:none;">Torna all&#39;inizio</span>
-      <span id="i-share" class="info" style="display:none;">Condividi articolo</span>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
     </span>
     <br/>
     <div id="share" style="display: none">
@@ -190,9 +190,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
@@ -223,9 +223,9 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/archives">Articoli</a></li>
+          <li><a href="/archives">Articles</a></li>
          
-          <li><a href="/search">Cerca</a></li>
+          <li><a href="/search">Search</a></li>
          
           <li><a href="/about">About</a></li>
         
