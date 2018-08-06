@@ -13,7 +13,7 @@
 <meta property="og:url" content="http://blog.keyboardman.me/2018/08/06/large-messages-with-grpc/index.html">
 <meta property="og:site_name" content="keyboardman">
 <meta property="og:description" content="概述使用gRPC的一个问题是，它的默认最大消息大小默认被设置为4MB，那么当数据量太大时该怎么办？ options可以通过在创建Server的时候，配置相关的参数来扩大限制最小消息大小的值。 1s := grpc.NewServer(grpc.MaxRecvMsgSize(size), grpc.MaxSendMsgSize(size)) MaxRecvMsgSize和MaxSendMsgSize">
-<meta property="og:updated_time" content="2018-08-06T08:20:53.098Z">
+<meta property="og:updated_time" content="2018-08-06T08:24:22.099Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="gRPC的大消息传输">
 <meta name="twitter:description" content="概述使用gRPC的一个问题是，它的默认最大消息大小默认被设置为4MB，那么当数据量太大时该怎么办？ options可以通过在创建Server的时候，配置相关的参数来扩大限制最小消息大小的值。 1s := grpc.NewServer(grpc.MaxRecvMsgSize(size), grpc.MaxSendMsgSize(size)) MaxRecvMsgSize和MaxSendMsgSize">
@@ -164,7 +164,7 @@
 <p>客户端请求也很简单。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">stream, err := client.Range(context.Background(), &amp;pb.Res&#123;</span><br><span class="line">    R: []*pb.Range&#123;</span><br><span class="line">        &#123;<span class="number">0</span>, <span class="number">99</span>&#125;,</span><br><span class="line">        &#123;<span class="number">100</span>, <span class="number">199</span>&#125;,</span><br><span class="line">        &#123;<span class="number">200</span>, <span class="number">-1</span>&#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 <p><a href="https://github.com/0x5010/example/tree/master/grpc/range" target="_blank" rel="noopener">完整代码</a></p>
-<p>这样我们就可以只请求资源的某个部分，基于此之上还可以并行请求，断点续传等。</p>
+<p>这样我们就可以只请求数据的某个部分，基于此之上还可以并行请求，断点续传等。</p>
 
   </div>
 </article>
