@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.keyboardman.me/"/>
-  <updated>2018-08-06T08:24:22.099Z</updated>
+  <updated>2018-09-15T15:46:29.708Z</updated>
   <id>http://blog.keyboardman.me/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>go中的finalizer</title>
+    <link href="http://blog.keyboardman.me/2018/09/15/finalizer-in-go/"/>
+    <id>http://blog.keyboardman.me/2018/09/15/finalizer-in-go/</id>
+    <published>2018-09-15T15:43:25.530Z</published>
+    <updated>2018-09-15T15:46:29.708Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在<code>Go</code>中，<code>finalizer</code>函数是当对象不在被引用，对象被<code>GC</code>进程选中并从内存中移除的时候将其调用，有点类似析构函数。可以使用<code>runtime.SetFinalizer</code>函数向对象添加<code>finalizer</code>。</p><h2 id="example"><a href="#example" class="headerlink" title="example"></a>example</h2><p>让我们看看它是如何工作的。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"runtime"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Test <span class="keyword">struct</span> &#123;</span><br><span class="line">    A <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// create pointer</span></span><br><span class="line">    t := &amp;Test&#123;&#125;</span><br><span class="line">    <span class="comment">// add finalizer which just prints</span></span><br><span class="line">    runtime.SetFinalizer(t, <span class="function"><span class="keyword">func</span><span class="params">(t *Test)</span></span> &#123; fmt.Println(<span class="string">"I AM DEAD"</span>) &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    test()</span><br><span class="line">    <span class="comment">// run garbage collection</span></span><br><span class="line">    runtime.GC()</span><br><span class="line">    <span class="comment">// sleep to switch to finalizer goroutine</span></span><br><span class="line">    time.Sleep(<span class="number">1</span> * time.Millisecond)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Output:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I AM DEAD</span><br></pre></td></tr></table></figure></p><p>创建一个<code>Test</code>对象<code>t</code>，它是指针并为其设置<code>finalizer</code>，当代码运行完<code>test()</code>函数后，它不在被引用，因此<code>GC</code>能够在自己的<code>goroutine</code>中回收它并调用之前设置的<code>finalizer</code>。注意如果从<code>Test</code>类型中没有字段为空结构，而空结构不分配内存，并且不会被<code>GC</code>，<code>finalizer</code>也不会被调用。</p><h2 id="标准库"><a href="#标准库" class="headerlink" title="标准库"></a>标准库</h2><p>在标准库中有些对象是默认设置了<code>finalizer</code>的。如</p><ul><li><code>os.File</code>对象会在<code>GC</code>时自动关闭文件</li><li><code>os.Process</code>对象会在<code>GC</code>时将释放与该进程相关的任何资源</li><li><code>net.Conn</code>对象会在<code>GC</code>时关闭网络连接</li></ul><p>以<code>net.Conn</code>为例，<code>Conn</code>会包含一个含有<code>netFD</code>(<code>socket</code>文件描述符)的<code>conn</code>，而<code>netFD</code>设置了关闭的<code>finalizer</code>。所以忘记调用<code>Close</code>去关闭连接，在<code>GC</code>时连接会被关闭，减少文件描述符泄露。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> conn <span class="keyword">struct</span> &#123;</span><br><span class="line">    fd *netFD</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(fd *netFD)</span> <span class="title">setAddr</span><span class="params">(laddr, raddr Addr)</span></span> &#123;</span><br><span class="line">    fd.laddr = laddr</span><br><span class="line">    fd.raddr = raddr</span><br><span class="line">    runtime.SetFinalizer(fd, (*netFD).Close)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>在调试的时候可以利用<code>finalizer</code>添加日志，定位不符合预期的对象回收，跟踪资源的使用。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_, file, line, _ := runtime.Caller(<span class="number">1</span>)</span><br><span class="line">runtime.SetFinalizer(conn, <span class="function"><span class="keyword">func</span><span class="params">(conn *Conn)</span></span> &#123;</span><br><span class="line">    log.Printf(<span class="string">"%s:%d: conn closed"</span>, file, line)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>个人认为大部分场景下都不应该使用<code>finalizer</code>。</p><p>首先不能依赖<code>finalizer</code>来对对象进行资源管理，它并不能完全避免资源泄露，因为不显示调用<code>runtime.GC()</code>的话，则<code>GC</code>发生的时间不可控，如果在这段时间有太多资源不去手动释放的话很容易导致资源被耗尽。而且在对象被<code>GC</code>进程选中并从内存中移除以前，<code>finalizer</code>都不会执行，即使是程序正常结束或者发生错误。所以要养成在对象使用完手动进行释放的习惯。</p><p>而且<code>SetFinalizer</code>最大的问题是延长了对象生命周期。在第一次回收时执行<code>finalizer</code>，且目标对象重新变成被引用状态，直到第二次才真正回收。这对于有大量对象分配的高并发算法，可能会造成很大麻烦。如果使用<code>finalizer</code>进行统计和打印日志，实际上会耗费太多的cpu资源。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;p&gt;在&lt;code&gt;Go&lt;/code&gt;中，&lt;code&gt;finalizer&lt;/code&gt;函数是当对象不在被引用，对象被&lt;code&gt;GC&lt;/code&gt;
+      
+    
+    </summary>
+    
+      <category term="go技巧" scheme="http://blog.keyboardman.me/categories/go%E6%8A%80%E5%B7%A7/"/>
+    
+    
+      <category term="go" scheme="http://blog.keyboardman.me/tags/go/"/>
+    
+      <category term="json" scheme="http://blog.keyboardman.me/tags/json/"/>
+    
+  </entry>
   
   <entry>
     <title>gRPC的大消息传输</title>
